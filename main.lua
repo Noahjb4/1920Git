@@ -1,6 +1,8 @@
 function love.load ()
     char = {}
     require("collision")
+    bump = require "bump"
+    world = bump.newWorld(64)
     love.graphics.getWidth ()
     love.graphics.getHeight ()
     love.window.setFullscreen (true)
