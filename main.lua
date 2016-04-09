@@ -1,23 +1,12 @@
 function love.load ()
-    char = {}
-    require("collision")
+  char = {}
+  require("collision")
+
+      --Start Menu
     love.graphics.getWidth ()
     love.graphics.getHeight ()
     love.window.setFullscreen (true)
-    right = love.graphics.newImage("right.png")
-    left = love.graphics.newImage("left.png")
-    front = love.graphics.newImage("front.png")
-    top = love.graphics.newImage ("toplayer.png")
-    bottom = love.graphics.newImage ("backlayer.png")
-    char[1] = love.graphics.newQuad (0, 64, 64, 64, right:getDimensions())
-    char[2] = love.graphics.newQuad (0, 128, 64, 64, right:getDimensions())
-    char[3] = love.graphics.newQuad (0, 192, 64, 64, right:getDimensions())
-    char[4] = love.graphics.newQuad (0, 128, 64, 64, right:getDimensions())
-    char[5] = love.graphics.newQuad (0, 0, 64, 64, right:getDimensions())
-    addCollision(67, 734, 1854, 911)
-    --65, 184, 1852, 345 real cordinates
-    addCollision(67, 94, 1854, 255)
-    --65, 985, 1852, 824 real cordinates
+
     logo = love.graphics.newImage ("logo.png")
     skyline = love.graphics.newImage ("skyline.png")
     startsprite = love.graphics.newImage ("StartButtons.png")
@@ -29,6 +18,34 @@ function love.load ()
       --Width of starting screen 1366, 768
     menu = true
     resolution = math.ceil (w / 1366)
+
+
+      --Wolrd Creation
+
+      top = love.graphics.newImage ("toplayer.png")
+      bottom = love.graphics.newImage ("backlayer.png")
+
+      addCollision(67, 734, 1854, 911)
+      --65, 184, 1852, 345 real cordinates
+      addCollision(67, 94, 1854, 255)
+      --65, 985, 1852, 824 real cordinates
+
+
+      --Character Creation
+          right = love.graphics.newImage("right.png")
+    left = love.graphics.newImage("left.png")
+    front = love.graphics.newImage("front.png")
+
+    char[1] = love.graphics.newQuad (0, 64, 64, 64, right:getDimensions())
+    char[2] = love.graphics.newQuad (0, 128, 64, 64, right:getDimensions())
+    char[3] = love.graphics.newQuad (0, 192, 64, 64, right:getDimensions())
+    char[4] = love.graphics.newQuad (0, 128, 64, 64, right:getDimensions())
+    char[5] = love.graphics.newQuad (0, 0, 64, 64, right:getDimensions())
+
+
+
+
+
    function love.draw ()
        i = 0
      if menu == true then
@@ -58,12 +75,14 @@ function love.load ()
      end
 
    function love.mousepressed (x, y, button)
-      if button == 1 then
-        if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 - 50 and y < h / 2 + 50  then
-          love.graphics.setBackgroundColor(0, 0, 0)
-          menu = false
-        elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 160 and y < h / 2 + 260 then
-          love.event.quit ()
+      if menu == true then
+        if button == 1 then
+          if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 - 50 and y < h / 2 + 50  then
+            love.graphics.setBackgroundColor(0, 0, 0)
+            menu = false
+          elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 160 and y < h / 2 + 260 then
+            love.event.quit ()
+          end
         end
       end
    end
