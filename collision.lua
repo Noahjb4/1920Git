@@ -1,3 +1,4 @@
+require("customise")
 x = 0
 xV = 0
 y = 0
@@ -15,9 +16,9 @@ function getDirection()
     end
   elseif math.abs(xV) < math.abs(yV) then
     if yV > 0 then
-      return "front"
-    elseif yV < 0 then
       return "back"
+    elseif yV < 0 then
+      return "front"
     end
   end
 end
@@ -72,5 +73,5 @@ function love.update(dt)
   end
   yV = yV * 0.9
   xV = xV * 0.9
-
+  updateArrow(dt)
 end
