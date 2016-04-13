@@ -2,6 +2,7 @@ function love.load ()
   char = {}
   require("collision")
   require("customise")
+  require("save")
 
       --Start Menu
 
@@ -30,17 +31,18 @@ function love.load ()
       bottom = love.graphics.newImage ("backlayer.png")
 
       addCollision(67, 734, 1854, 911)
-      --65, 184, 1852, 345 real cordinates
+      --65, 184, 1852, 345 real coordinates
       addCollision(67, 94, 1854, 255)
-      --65, 985, 1852, 824 real cordinates
+      --65, 985, 1852, 824 real coordinates
 
 
       --Character Generation
 
-    right = love.graphics.newImage("right.png")
-    left = love.graphics.newImage("left.png")
-    front = love.graphics.newImage("front.png")
-    
+      right = love.graphics.newImage("right.png")
+      left = love.graphics.newImage("left.png")
+      front = love.graphics.newImage("front.png")
+      back = love.graphics.newImage("back.png")
+
 
     char[1] = love.graphics.newQuad (0, 64, 64, 64, right:getDimensions())
     char[2] = love.graphics.newQuad (0, 128, 64, 64, right:getDimensions())
@@ -48,8 +50,8 @@ function love.load ()
     char[4] = love.graphics.newQuad (0, 128, 64, 64, right:getDimensions())
     char[5] = love.graphics.newQuad (0, 0, 64, 64, right:getDimensions())
 
-
-
+    loaded = 0
+    getSaves()
 
     -- Drawing Images
 
@@ -73,13 +75,14 @@ function love.load ()
 
        --Character/Animations
      elseif menu == 0 then
+       love.graphics.setBackgroundColor(0, 0, 0)
        love.graphics.draw(bottom, w / 2 + x, h / 2 + y)
        if direction == "right" then
          love.graphics.draw(right, char[math.floor(frame) + 1], w / 2 - 32, h / 2 - 64)
        elseif direction == "left" then
          love.graphics.draw(left, char[math.floor(frame) + 1], w / 2 - 32, h / 2 - 64)
        elseif direction == "back" then
-         love.graphics.draw(front, char[math.floor(frame) + 1], w / 2 - 32, h / 2 - 64)
+         love.graphics.draw(back, char[math.floor(frame) + 1], w / 2 - 32, h / 2 - 64)
        elseif direction == "front" then
          love.graphics.draw(front, char[math.floor(frame) + 1], w / 2 - 32, h / 2 - 64)
        end
@@ -87,7 +90,7 @@ function love.load ()
 
        --Character Customization
      elseif menu == 2 then
-       love.graphics.setBackgroundColor (191, 178, 165)
+       love.graphics.setBackgroundColor(191, 178, 165)
        while i < resolution do
          love.graphics.draw (skyline, i * 1366, h - 868)
          i = i + 1
@@ -100,12 +103,11 @@ function love.load ()
 
      --Buttons Function (makes buttons work)
    function love.mousepressed (x, y, button)
-      if menu == 1 then
-        if button == 1 then
+      if button == 1 then
+        if menu == 1 then
 
             --Start button
           if x > w / 2 - 100 and x < w / 2 + 100 and y > h - 550 and y < h - 450  then
-            love.graphics.setBackgroundColor(0, 0, 0)
             menu = 0
 
             --Back button
@@ -119,6 +121,15 @@ function love.load ()
              if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 300 and y < h / 2 + 400 then
 
              end
+          end
+        elseif menu == 2 then
+
+            -- Character customization buttons
+          if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 300 and y < h / 2 + 400 then
+           love.filesystem.write("save" .. tostring(saves + 1) ..  ".txt", tostring(selectedBody) .. ", " .. tostring(selectedHead))
+           getSaves()
+           loaded = saves
+           menu = 0
           end
         end
       end
