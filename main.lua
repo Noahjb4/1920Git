@@ -74,6 +74,7 @@ function love.load ()
        --Start Menu
      if menu == 1 then
        love.graphics.setBackgroundColor(191, 178, 165)
+       love.graphics.draw (logo, w / 2 - 500, h / 2 - 600)
        while i < resolution do
          love.graphics.draw (skyline, i * 1366, h - 868)
          i = i + 1
@@ -81,7 +82,6 @@ function love.load ()
        if resolution == 0 then
          love.graphics.draw (skyline, 0, 0 )
        end
-       love.graphics.draw (logo, w / 2 - 500, h / 2 - 600)
        love.graphics.draw (buttons, loadButton, w / 2 - 100, h - 550)
        love.graphics.draw (buttons, newButton, w / 2 - 100, h - 400)
        love.graphics.draw (buttons, backButton,  w / 2 - 100, h - 250)
@@ -127,14 +127,6 @@ function love.load ()
        --Load Screen
      elseif menu == 3 then
        love.graphics.setBackgroundColor(191, 178, 165)
-       love.graphics.setBackgroundColor(191, 178, 165)
-       while i < resolution do
-         love.graphics.draw (skyline, i * 1366, h - 868)
-         i = i + 1
-       end
-       if resolution == 0 then
-         love.graphics.draw (skyline, 0, 0 )
-       end
        for i = 0, saves - 1 do
          saveDisplay = love.filesystem.load("save" .. tostring(i + 1) ..  ".txt")
          saveDisplay()
