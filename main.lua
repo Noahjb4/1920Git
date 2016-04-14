@@ -2,6 +2,8 @@ function love.load ()
   require("collision")
   require("customise")
   require("save")
+  corbel = love.graphics.newFont("corbel.ttf", 18)
+  love.graphics.setFont(corbel)
 
       --Start Menu
 
@@ -22,6 +24,7 @@ function love.load ()
       --Width of starting screen 1366, 768
     menu = 1
     resolution = math.ceil (w / 1366)
+    date = 0
 
 
       --Wolrd Creation
@@ -65,12 +68,12 @@ function love.load ()
     -- Drawing Images
 
    function love.draw ()
-       i = 0
+     i = 0
 
        --Start Menu
      if menu == 1 then
+       love.graphics.setBackgroundColor(191, 178, 165)
        love.graphics.draw (logo, w / 2 - 500, h / 2 - 600)
-       love.graphics.setBackgroundColor (178, 168, 160)
        while i < resolution do
          love.graphics.draw (skyline, i * 1366, h - 868)
          i = i + 1
@@ -112,11 +115,22 @@ function love.load ()
          love.graphics.draw (skyline, 0, 0 )
        end
        cC()
-     elseif menu == 3 then
-       for i = 0, saves do
 
+       --Load Screen
+     elseif menu == 3 then
+       love.graphics.setBackgroundColor(191, 178, 165)
+       for i = 0, saves - 1 do
+         saveDisplay = love.filesystem.load("save" .. tostring(i + 1) ..  ".txt")
+         saveDisplay()
+         love.graphics.setColor(244, 242, 239)
+         love.graphics.rectangle("fill", 32, i * 160 + 32, w - 64, 128 )
+         love.graphics.draw(front, charBody[selectedBody][1], 32, i * 160 + 84)
+         love.graphics.draw(front, charHead[selectedHead][1], 32, i * 160 + 64)
+         love.graphics.setColor(39, 25, 15)
+         love.graphics.print(date, 128, i * 160 + 82, 0, 1, 1)
        end
      end
+   love.graphics.setColor(255, 255, 255)
    end
 
      --Buttons Function (makes buttons work)
@@ -126,7 +140,7 @@ function love.load ()
 
             --Start button
           if x > w / 2 - 100 and x < w / 2 + 100 and y > h - 550 and y < h - 450  then
-            menu = 0
+            menu = 3
 
             --Back button
           elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h -250 and y < h - 150 then
@@ -140,11 +154,22 @@ function love.load ()
 
             -- Character customization buttons
           if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 300 and y < h / 2 + 400 then
-           love.filesystem.write("save" .. tostring(saves + 1) ..  ".txt", "selectedBody = " .. tostring(selectedBody) .. "\r\nselectedHead = " .. tostring(selectedHead))
+           love.filesystem.write("save" .. tostring(saves + 1) ..  ".txt", "selectedBody = " .. tostring(selectedBody) ..
+           "\r\nselectedHead = " .. tostring(selectedHead) ..
+           "\r\n date = '" .. os.date("%c") .. "'")
+
            getSaves()
-           load = love.filesystem.load("save" .. tostring(saves) ..  ".txt", 10)
+           load = love.filesystem.load("save" .. tostring(saves) ..  ".txt")
            load()
            menu = 0
+          end
+        elseif menu == 3 then
+          for i = 0, saves - 1 do
+            if x > 32 and y > i * 160 + 32 and x < w - 32 and y < i * 160 + 160 then
+              load = love.filesystem.load("save" .. tostring(i + 1) ..  ".txt")
+              load()
+              menu = 0
+            end
           end
         end
       end
@@ -155,7 +180,6 @@ function love.load ()
 
      --Escape menu
      if key == "escape" and menu ~= 1 then
-       love.graphics.setBackgroundColor (104, 92, 83)
        menu = 1
      end
 
