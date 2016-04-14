@@ -46,6 +46,7 @@ function checkCollision()
   end
 end
 function love.update(dt)
+  if menu == 0 then
   if love.keyboard.isDown("d") == true then
     xV = xV - 1
   end
@@ -57,6 +58,7 @@ function love.update(dt)
   end
   if love.keyboard.isDown("s") == true then
     yV = yV - 1
+  end
   end
   x = x + xV
   y = y + yV

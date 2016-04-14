@@ -18,6 +18,7 @@ function love.load ()
     backButton = love.graphics.newQuad (0, 100, 200, 100, buttons:getDimensions())
     newButton = love.graphics.newQuad (0, 200, 200, 100, buttons:getDimensions())
     saveButton = love.graphics.newQuad (0, 300, 200, 100, buttons:getDimensions())
+    resumeButton = love.graphics.newQuad (200, 300, 306, 100, buttons:getDimensions())
 
     w = love.graphics.getWidth ()
     h = love.graphics.getHeight ()
@@ -85,8 +86,9 @@ function love.load ()
        love.graphics.draw (buttons, newButton, w / 2 - 100, h - 400)
        love.graphics.draw (buttons, backButton,  w / 2 - 100, h - 250)
 
+
        --Character/Animations
-     elseif menu == 0 then
+     elseif menu == 0 or menu == -1 then
        love.graphics.setBackgroundColor(0, 0, 0)
        love.graphics.draw(bottom, w / 2 + x, h / 2 + y)
        if direction == "right" then
@@ -103,6 +105,12 @@ function love.load ()
          love.graphics.draw(front, charHead[selectedHead][math.floor(frame) + 1], w / 2 - 32, h / 2 - 64)
        end
        love.graphics.draw(top, w / 2 + x, h / 2 + y)
+
+       --Ingame menu (draw)
+       if menu == -1 then
+         love.graphics.draw(buttons, resumeButton, w / 2 - 150, h - 550)
+         love.graphics.draw (buttons, backButton,  w / 2 - 100, h - 250)
+       end
 
        --Character Customization
      elseif menu == 2 then
@@ -157,8 +165,10 @@ function love.load ()
             -- Load button
           elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h - 400 and y < h - 300 then
            menu = 2
-         end
-        elseif menu == 2 then
+          end
+
+
+          elseif menu == 2 then
 
             -- Character customization buttons
           if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 300 and y < h / 2 + 400 then
@@ -180,6 +190,16 @@ function love.load ()
             end
           end
         end
+
+        --Ingame menu (Resume)
+        if menu == -1 and x > w / 2 - 150 and x < w / 2 + 160 and y > h - 550 and y < h - 450 then
+           menu = 0
+
+        --Ingame menu (Back)
+        elseif menu == -1 and  x > w / 2 - 100 and x < w / 2 + 100 and y > h -250 and y < h - 150 then
+           menu = 1
+        end
+
       end
    end
 
@@ -187,9 +207,14 @@ function love.load ()
    function love.keypressed (key)
 
      --Escape menu
-     if key == "escape" and menu ~= 1 then
-       menu = 1
-     end
+      if key == "escape" and menu >= 1 then
+        menu = 1
+      end
+
+     --Ingame menu (functionality)
+      if key == "escape" and menu == 0 then
+        menu = -1
+      end
 
      --Arrow Navigation (up)
      if key == "w" and menu == 2 then
