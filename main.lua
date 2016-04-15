@@ -27,7 +27,7 @@ function love.load()
   resolution = math.ceil (w / 1366)
   date = 0
   loadScroll = 0
-  alreadyDown = false
+  pos = 0
 
     --Wolrd Creation
 
@@ -66,7 +66,7 @@ function love.load()
 
   loaded = 0
   getSaves()
-
+end
   -- Drawing Images
 
  function love.draw ()
@@ -160,24 +160,8 @@ function love.load()
      if h / (160 * saves) >= 1 then
        love.graphics.rectangle("fill", w - 64, 0, 32, h)
      else
-       love.graphics.rectangle("fill", w - 64, loadScroll * (h / (saves * 160)), 32, h * (h / (saves * 160)))
+       love.graphics.rectangle("fill", w - 64, loadScroll * (h / (saves * 160)), 32, (h  - 32) * (h / (saves * 160)))
      end
-
-      if love.mouse.isDown(1) then
-        x2, y2 = love.mouse.getPosition()
-          if alreadyDown == false then
-            if x2 > w - 64 and y2 > 0 + loadScroll and x2 < w - 32 and y2 < (160 * saves)  then
-              alreadyDown = true
-              pos = y2
-            end
-          else
-            loadScroll = y2 - pos
-          end
-      else
-        alreadyDown = false
-        pos = 0
-      end
-
      if h / (160 * saves) >= 1 then
        loadScroll = 0
      else
@@ -193,7 +177,6 @@ function love.load()
          loadScroll = (160 * saves) - h + 32
        end
      end
-
    end
    love.graphics.setColor(255, 255, 255)
  end
@@ -201,54 +184,58 @@ function love.load()
 
  --Buttons Function (makes buttons work)
  function love.mousepressed (x, y, button)
-    if button == 1 then
-      if menu == 1 then
+  if button == 1 then
+    if menu == 1 then
 
-          --Start button
-        if x > w / 2 - 100 and x < w / 2 + 100 and y > h - 550 and y < h - 450  then
-          menu = 3
+        --Start button
+      if x > w / 2 - 100 and x < w / 2 + 100 and y > h - 550 and y < h - 450  then
+        menu = 3
 
-          --Back button
-        elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h -250 and y < h - 150 then
-          love.event.quit ()
+        --Back button
+      elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h -250 and y < h - 150 then
+        love.event.quit ()
 
-          -- Load button
-        elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h - 400 and y < h - 300 then
-         menu = 2
+        -- Load button
+      elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h - 400 and y < h - 300 then
+       menu = 2
+      end
+
+    elseif menu == 2 then
+
+        -- Character customization buttons
+      if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 300 and y < h / 2 + 400 then
+       love.filesystem.write("save" .. tostring(saves + 1) ..  ".txt", "selectedBody = " .. tostring(selectedBody) ..
+       "\r\nselectedHead = " .. tostring(selectedHead) ..
+       "\r\n date = '" .. os.date("%c") .. "'")
+
+       getSaves()
+       load = love.filesystem.load("save" .. tostring(saves) ..  ".txt")
+       load()
+       menu = 0
+      end
+    elseif menu == 3 then
+      for i = 0, saves - 1 do
+        if x > 32 and y > i * 160 + 32 - loadScroll and x < w - 96 and y < i * 160 + 160 - loadScroll then
+          load = love.filesystem.load("save" .. tostring(i + 1) ..  ".txt")
+          load()
+          menu = 0
         end
+      end
 
-      elseif menu == 2 then
 
-          -- Character customization buttons
-        if x > w / 2 - 100 and x < w / 2 + 100 and y > h / 2 + 300 and y < h / 2 + 400 then
-         love.filesystem.write("save" .. tostring(saves + 1) ..  ".txt", "selectedBody = " .. tostring(selectedBody) ..
-         "\r\nselectedHead = " .. tostring(selectedHead) ..
-         "\r\n date = '" .. os.date("%c") .. "'")
 
-         getSaves()
-         load = love.filesystem.load("save" .. tostring(saves) ..  ".txt")
-         load()
-         menu = 0
-        end
-      elseif menu == 3 then
-        for i = 0, saves - 1 do
-          if x > 32 and y > i * 160 + 32 and x < w - 96 and y < i * 160 + 160 then
-            load = love.filesystem.load("save" .. tostring(i + 1) ..  ".txt")
-            load()
-            menu = 0
-          end
-        end
-      --Ingame menu (Resume)
-      elseif menu == -1 and x > w / 2 - 150 and x < w / 2 + 160 and y > h - 550 and y < h - 450 then
-         menu = 0
-
+    elseif menu == -1 then
+      if x > w / 2 - 150 and x < w / 2 + 160 and y > h - 550 and y < h - 450 then
+       --Ingame menu (Resume)
+       menu = 0
+      elseif x > w / 2 - 100 and x < w / 2 + 100 and y > h -250 and y < h - 150 then
       --Ingame menu (Back)
-      elseif menu == -1 and  x > w / 2 - 100 and x < w / 2 + 100 and y > h -250 and y < h - 150 then
-         menu = 1
+       menu = 1
       end
     end
   end
  end
+
 
 
  --Escape menu + Character customization Navigation
@@ -309,4 +296,15 @@ function love.load()
        end
      end
    end
+ end
+
+ function love.wheelmoved(x, y)
+     if menu == 3 then
+       loadScroll = loadScroll - y * 8
+       if loadScroll < 0 then
+         loadScroll = 0
+       elseif loadScroll > (160 * saves) - h + 32 then
+         loadScroll = (160 * saves) - h + 32
+       end
+     end
  end
